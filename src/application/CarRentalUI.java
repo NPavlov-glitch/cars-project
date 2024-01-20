@@ -76,8 +76,25 @@ public class CarRentalUI extends Application {
             // Rent Out button
             Button rentOutButton = new Button("Rent Out");
             grid.add(rentOutButton, 0, 11, 2, 1);
+            
+            // Event handling for adding a car
+            addCarButton.setOnAction(event -> {
+                String make = makeTextField.getText();
+                String model = modelTextField.getText();
 
-            // Set the scene
+                // Perform logic to add the car (e.g., create a Car object, add to a list, etc.)
+                System.out.println("Added Car: " + make + " " + model);
+            });
+
+            // Event handling for adding a client
+            addClientButton.setOnAction(event -> {
+                String name = nameTextField.getText();
+                String phone = phoneTextField.getText();
+
+                // Perform logic to add the client (e.g., create a Client object, add to a list, etc.)
+                System.out.println("Added Client: " + name + ", Phone: " + phone);
+            });
+
             Scene scene = new Scene(grid, 400, 500);
             primaryStage.setScene(scene);
 

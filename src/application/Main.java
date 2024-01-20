@@ -16,17 +16,17 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
         try {
-            Group root = new Group();
-            Scene scene = new Scene(root, Color.BLACK);
-            primaryStage.setTitle("Stage Demo Program");
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            // Create an instance of CarRentalUI
+CarRentalUI carRentalUI = new CarRentalUI();
+            
+            // Pass the stage to the CarRentalUI instance
+            carRentalUI.start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
