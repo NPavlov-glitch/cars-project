@@ -17,7 +17,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
         try {
             // Create an instance of CarRentalUI
-CarRentalUI carRentalUI = new CarRentalUI();
+        	CarRentalUI carRentalUI = new CarRentalUI();
             
             // Pass the stage to the CarRentalUI instance
             carRentalUI.start(primaryStage);
