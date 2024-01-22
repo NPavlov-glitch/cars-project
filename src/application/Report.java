@@ -25,7 +25,7 @@ public class Report {
     }
 
     // Method to generate a report of operators and their work
-    public static void generateOperatorsWorkReport(List<User> operators) {
+    public static void generateOperatorsWorkReport(List<? extends User> operators) {
         System.out.println("Operators Work Report:");
         for (User operator : operators) {
             System.out.println("Operator: " + operator.getUsername() +

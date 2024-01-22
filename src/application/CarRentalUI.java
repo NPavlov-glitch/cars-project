@@ -124,20 +124,32 @@ public class CarRentalUI extends Application {
                 String model = modelTextField.getText();
 
                 // Retrieve values for additional attributes
-                int year = Integer.parseInt(yearTextField.getText());
-                String carClass = carClassTextField.getText();
-                String category = categoryTextField.getText();
-                String features = featuresTextField.getText();
-                String photos = photosTextField.getText();
-                boolean smoker = smokerCheckBox.isSelected();
+                String yearText = yearTextField.getText();
+                if (!yearText.isEmpty()) {
+                    try {
+                        int year = Integer.parseInt(yearText);
+                        String carClass = carClassTextField.getText();
+                        String category = categoryTextField.getText();
+                        String features = featuresTextField.getText();
+                        String photos = photosTextField.getText();
+                        boolean smoker = smokerCheckBox.isSelected();
 
-                // Create a new Car object using the provided details
-                Car car = new Car(make, model, year, carClass, category, features, photos, smoker);
+                        // Create a new Car object using the provided details
+                        Car car = new Car(make, model, year, carClass, category, features, photos, smoker);
 
-                // Add the created car to the list or perform any other logic
-                cars.add(car);
+                        // Add the created car to the list or perform any other logic
+                        cars.add(car);
 
-                System.out.println("Added Car: " + car);
+                        System.out.println("Added Car: " + car);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid year format: " + yearText);
+                        // Handle the error (e.g., display an error message to the user)
+                    }
+                } else {
+                    System.err.println("Year field is empty");
+                    // Handle the error (e.g., display an error message to the user)
+                }
+           
             });
 
 
