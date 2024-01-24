@@ -7,9 +7,9 @@ public class CarRentalCompany {
 
     private Administrator administrator;
 
-    public CarRentalCompany(String adminUsername, String adminPassword) {
+    public CarRentalCompany(int adminId, String adminUsername, String adminPassword) {
         // Initialize the administrator
-        administrator = new Administrator(adminUsername, adminPassword);
+        administrator = new Administrator(adminId, adminUsername, adminPassword);
         this.name = "BestCarsRental";
     }
 
@@ -26,9 +26,9 @@ public class CarRentalCompany {
         System.out.println("Car rental company created: " + name);
     }
 
-    public void createOperator(String username, String password) {
+    public void createOperator(int operatorId, String username, String password) {
         // Logic to create an operator
-        administrator.createOperator(username, password);
+        administrator.createOperator(operatorId, username, password);
     }
 
     public void registerClient(int clientId, String name, String contactDetails) {

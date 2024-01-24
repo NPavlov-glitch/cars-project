@@ -5,21 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Operator extends User {
-	private String username;
-    private String password;
     private List<Client> clients;
     private List<RentalProtocol> rentalHistory;
     private List<Car> availableCars;
 
-    public Operator(String username, String password) {
-    	super(username, password, "Operator");
-        this.username = username;
-        this.password = password;
+    public Operator(int id, String username, String password) {
+        super(id, username, password, "Operator");
         this.clients = new ArrayList<>();
         this.rentalHistory = new ArrayList<>();
         this.availableCars = new ArrayList<>();
     }
-    
+
     public void registerClient(int clientId, String name, String contactDetails) {
         Client client = new Client(clientId, name, contactDetails);
         clients.add(client);

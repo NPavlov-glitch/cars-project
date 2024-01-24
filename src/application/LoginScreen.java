@@ -47,8 +47,10 @@ public class LoginScreen extends Application {
             loginButton.setOnAction(event -> {
                 String enteredUsername = usernameTextField.getText();
                 String enteredPassword = passwordField.getText();
+                
+                User authenticatedUser = UserDAO.authenticateUser(enteredUsername, enteredPassword);
 
-                if (authenticate(enteredUsername, enteredPassword)) {
+                if ( authenticatedUser != null ) {
                     // Authentication successful
                     openMainApplication();
                 } else {
@@ -57,7 +59,7 @@ public class LoginScreen extends Application {
                 }
             });
 
-            Scene scene = new Scene(grid, 300, 150);
+            Scene scene = new Scene(grid, 500, 250);
             primaryStage.setScene(scene);
 
             primaryStage.show();

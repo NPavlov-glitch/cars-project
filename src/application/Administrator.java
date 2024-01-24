@@ -10,8 +10,8 @@ public class Administrator extends User {
     private List<Operator> operators;
     private List<RentalProtocol> rentalHistory;
 
-    public Administrator(String username, String password) {
-        super(username, password, "Administrator");
+    public Administrator(int id, String username, String password) {
+        super(id, username, password, "Administrator");
         this.availableCars = new ArrayList<>();
         this.operators = new ArrayList<>();
         this.rentalHistory = new ArrayList<>();
@@ -26,8 +26,8 @@ public class Administrator extends User {
         System.out.println("Car rental company created: " + carRentalCompany.getName());
     }
 
-    public void createOperator(String username, String password) {
-        Operator operator = new Operator(username, password);
+    public void createOperator(int id, String username, String password) {
+        Operator operator = new Operator(id, username, password);
         operator.setRole("Operator");
         operators.add(operator);
         System.out.println("Operator created: " + operator.getUsername());

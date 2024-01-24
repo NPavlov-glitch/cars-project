@@ -19,6 +19,21 @@ public class CarRentalUI extends Application {
 	private List<Car> cars = new ArrayList<>();
     private List<Client> clients = new ArrayList<>();
     private Operator operator;
+    private User loggedInUser;
+    private Button createOperatorButton;
+    
+    private void loginUser(User user) {
+        loggedInUser = user;
+        updateUIBasedOnUserRole(loggedInUser);
+    }
+
+    private void updateUIBasedOnUserRole(User loggedInUser) {
+        if (loggedInUser != null && "Administrator".equals(loggedInUser.getRole())) {
+            createOperatorButton.setVisible(true);
+        } else {
+            createOperatorButton.setVisible(false);
+        }
+    }
     
     @Override
     public void start(Stage primaryStage) {
@@ -186,9 +201,12 @@ public class CarRentalUI extends Application {
                     System.out.println("Invalid car or client selection");
                 }
             });
+            
+            createOperatorButton = new Button("Create Operator");
+            grid.add(createOperatorButton, 0, 18, 2, 1);
+            createOperatorButton.setVisible(false);
 
-
-            Scene scene = new Scene(grid, 400, 500);
+            Scene scene = new Scene(grid, 500, 600);
             primaryStage.setScene(scene);
 
             primaryStage.show();
