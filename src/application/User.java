@@ -5,6 +5,7 @@ public class User {
     private String username;
     private String password;
     private String role; // Administrator or Operator
+    private CarRentalCompany carRentalCompany;
 
     // Constructors
     public User(int id, String username, String password, String role) {
@@ -45,5 +46,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+    
+    public CarRentalCompany getCarRentalCompany() {
+    	return carRentalCompany;
+
+    }
+    
+    public void setCarRentalCompany(CarRentalCompany carRentalCompany) {
+    	this.carRentalCompany = carRentalCompany;
     }
 }

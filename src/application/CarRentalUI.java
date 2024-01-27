@@ -19,21 +19,8 @@ public class CarRentalUI extends Application {
 	private List<Car> cars = new ArrayList<>();
     private List<Client> clients = new ArrayList<>();
     private Operator operator;
-    private User loggedInUser;
     private Button createOperatorButton;
-    
-    private void loginUser(User user) {
-        loggedInUser = user;
-        updateUIBasedOnUserRole(loggedInUser);
-    }
-
-    private void updateUIBasedOnUserRole(User loggedInUser) {
-        if (loggedInUser != null && "Administrator".equals(loggedInUser.getRole())) {
-            createOperatorButton.setVisible(true);
-        } else {
-            createOperatorButton.setVisible(false);
-        }
-    }
+    private User loggedInUser;
     
     @Override
     public void start(Stage primaryStage) {
@@ -131,6 +118,27 @@ public class CarRentalUI extends Application {
             // Rent Out button
             Button rentOutButton = new Button("Rent Out");
             grid.add(rentOutButton, 0, 17, 2, 1);
+            
+            createOperatorButton = new Button("Create Operator");
+            grid.add(createOperatorButton, 0, 18, 2, 1);
+            createOperatorButton.setVisible(false);
+            
+            Label companyLabel = new Label("Create Rental Company");
+            grid.add(companyLabel, 0, 19, 2, 1);
+
+            Label companyNameLabel = new Label("Company Name:");
+            grid.add(companyNameLabel, 0, 20);
+            TextField companyNameTextField = new TextField();
+            grid.add(companyNameTextField, 1, 20);
+
+            Label companyLocationLabel = new Label("Company Location:");
+            grid.add(companyLocationLabel, 0, 21);
+            TextField companyLocationTextField = new TextField();
+            grid.add(companyLocationTextField, 1, 21);
+
+            // Add Rental Company button
+            Button createCompanyButton = new Button("Create Rental Company");
+            grid.add(createCompanyButton, 0, 22, 2, 1);
 
             
             // Event handling for adding a car
@@ -202,14 +210,33 @@ public class CarRentalUI extends Application {
                 }
             });
             
-            createOperatorButton = new Button("Create Operator");
-            grid.add(createOperatorButton, 0, 18, 2, 1);
-            createOperatorButton.setVisible(false);
+         // Event handling for creating a rental company
+            createCompanyButton.setOnAction(event -> {
+                String companyName = companyNameTextField.getText();
+                String companyLocation = companyLocationTextField.getText();
+
+                // Create a new CarRentalCompany
+                CarRentalCompany newCompany = new CarRentalCompany(companyName, companyLocation);
+
+                // Insert the company information into the database
+                boolean success = CompanyDAO.createCompany(newCompany);
+
+                if (success) {
+                    // Associate the company with the logged-in administrator
+//                    loggedInUser.setCarRentalCompany(newCompany);
+
+                    System.out.println("Created CarRentalCompany: " + newCompany.getName());
+                } else {
+                    System.out.println("Failed to create CarRentalCompany.");
+                    // Handle the error (e.g., display an error message to the user)
+                }
+            });
 
             Scene scene = new Scene(grid, 500, 600);
             primaryStage.setScene(scene);
 
             primaryStage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,7 +1,6 @@
 package application;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,9 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class LoginScreen extends Application {
-
-    private static final String ADMIN_USERNAME = "admin";
-    private static final String ADMIN_PASSWORD = "admin123";
+	private static User authenticatedUser;
     private Stage loginStage;
 
     @Override
@@ -48,7 +45,7 @@ public class LoginScreen extends Application {
                 String enteredUsername = usernameTextField.getText();
                 String enteredPassword = passwordField.getText();
                 
-                User authenticatedUser = UserDAO.authenticateUser(enteredUsername, enteredPassword);
+                authenticatedUser = UserDAO.authenticateUser(enteredUsername, enteredPassword);
 
                 if ( authenticatedUser != null ) {
                     // Authentication successful
@@ -68,14 +65,8 @@ public class LoginScreen extends Application {
         }
     }
 
-    private boolean authenticate(String username, String password) {
-        // For simplicity, hardcoding a single set of admin credentials
-        return ADMIN_USERNAME.equals(username) && ADMIN_PASSWORD.equals(password);
-    }
-
     private void openMainApplication() {
     	loginStage.close();
-        
     	CarRentalUI carRentalUI = new CarRentalUI();
         carRentalUI.start(new Stage());
     }

@@ -1,58 +1,52 @@
 package application;
 
-import java.time.LocalDateTime;
-
 public class CarRentalCompany {
+    private int id;
     private String name;
+    private String location;
 
-    private Administrator administrator;
+    public CarRentalCompany() {
+    }
 
-    public CarRentalCompany(int adminId, String adminUsername, String adminPassword) {
-        // Initialize the administrator
-        administrator = new Administrator(adminId, adminUsername, adminPassword);
-        this.name = "BestCarsRental";
+    public CarRentalCompany(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public Administrator getAdministrator() {
-        return administrator;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public void createCarRentalCompany() {
-        // Logic to create a car rental company
         System.out.println("Car rental company created: " + name);
     }
 
-    public void createOperator(int operatorId, String username, String password) {
-        // Logic to create an operator
-        administrator.createOperator(operatorId, username, password);
-    }
-
-    public void registerClient(int clientId, String name, String contactDetails) {
-        // Logic to register a client
-        administrator.registerClient(clientId, name, contactDetails);
-    }
-
-    public void registerCar(String make, String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
-        administrator.registerCar(make, model, year, carClass, category, features, photos, smoker);
-    }
-
-    public void rentOutCar(Car car, Client client, LocalDateTime startDate, LocalDateTime endDate, String status, String description) {
-        // Logic to rent out a car
-        administrator.rentOutCar(car, client, startDate, endDate, status, description);
-    }
-
-    public void generateReports() {
-        // Logic to generate reports
-        administrator.generateAvailableCarsReport();
-        administrator.generateRentingHistoryReport();
-        administrator.generateOperatorsWorkReport();
-    }
-
-    public void handleNotifications() {
-        // Logic to handle notifications (expiring/expired rental periods)
+    @Override
+    public String toString() {
+        return "CarRentalCompany{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", location='" + location + '\'' +
+                '}';
     }
 }
