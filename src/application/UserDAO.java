@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 public class UserDAO {
     private static final String INSERT_USER = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+    private static final String INSERT_COMPANY = "INSERT INTO company (name, location) VALUES (?, ?)";
     private static final String SELECT_USER = "SELECT * FROM users WHERE username = ? AND password = ?";
     private static final String CHECK_USERNAME_AVAILABILITY = "SELECT * FROM users WHERE username = ?";
 
@@ -23,6 +24,19 @@ public class UserDAO {
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, role);
             System.out.println("user created successfully!");
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public static boolean createCompany(CarRentalCompany company) {
+        try (Connection connection = DatabaseConnector.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COMPANY)) {
+            preparedStatement.setString(1, company.getName());
+            preparedStatement.setString(2, company.getLocation());
+
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

@@ -119,28 +119,45 @@ public class CarRentalUI extends Application {
             Button rentOutButton = new Button("Rent Out");
             grid.add(rentOutButton, 0, 17, 2, 1);
             
-            createOperatorButton = new Button("Create Operator");
-            grid.add(createOperatorButton, 0, 18, 2, 1);
-            createOperatorButton.setVisible(false);
-            
             Label companyLabel = new Label("Create Rental Company");
             grid.add(companyLabel, 0, 19, 2, 1);
 
-            Label companyNameLabel = new Label("Company Name:");
-            grid.add(companyNameLabel, 0, 20);
-            TextField companyNameTextField = new TextField();
-            grid.add(companyNameTextField, 1, 20);
+	         // Create Rental Company UI components
+	         Label createCompanyLabel = new Label("Create Rental Company");
+	         grid.add(createCompanyLabel, 0, 19, 2, 1);
+	
+	         Label companyNameLabel = new Label("Company Name:");
+	         grid.add(companyNameLabel, 0, 20);
+	         TextField companyNameTextField = new TextField();
+	         grid.add(companyNameTextField, 1, 20);
+	
+	         Label companyLocationLabel = new Label("Company Location:");
+	         grid.add(companyLocationLabel, 0, 21);
+	         TextField companyLocationTextField = new TextField();
+	         grid.add(companyLocationTextField, 1, 21);
+	
+	         // Add Rental Company button
+	         Button createCompanyButton = new Button("Create Rental Company");
+	         grid.add(createCompanyButton, 0, 22, 2, 1);
+	
+	         // Create Operator UI components
+	         Label createOperatorLabel = new Label("Create Operator");
+	         grid.add(createOperatorLabel, 0, 23, 2, 1);
+	
+	         Label usernameLabel = new Label("Username:");
+	         grid.add(usernameLabel, 0, 24);
+	         TextField usernameTextField = new TextField();
+	         grid.add(usernameTextField, 1, 24);
+	
+	         Label passwordLabel = new Label("Password:");
+	         grid.add(passwordLabel, 0, 25);
+	         TextField passwordTextField = new TextField();
+	         grid.add(passwordTextField, 1, 25);
+	
+	         // Add Operator button
+	         Button createOperatorButton = new Button("Create Operator");
+	         grid.add(createOperatorButton, 0, 26, 2, 1);
 
-            Label companyLocationLabel = new Label("Company Location:");
-            grid.add(companyLocationLabel, 0, 21);
-            TextField companyLocationTextField = new TextField();
-            grid.add(companyLocationTextField, 1, 21);
-
-            // Add Rental Company button
-            Button createCompanyButton = new Button("Create Rental Company");
-            grid.add(createCompanyButton, 0, 22, 2, 1);
-
-            
             // Event handling for adding a car
             addCarButton.setOnAction(event -> {
                 String make = makeTextField.getText();
@@ -174,7 +191,6 @@ public class CarRentalUI extends Application {
                 }
            
             });
-
 
             addClientButton.setOnAction(event -> {
                 String clientName = nameTextField.getText();
@@ -219,7 +235,7 @@ public class CarRentalUI extends Application {
                 CarRentalCompany newCompany = new CarRentalCompany(companyName, companyLocation);
 
                 // Insert the company information into the database
-                boolean success = CompanyDAO.createCompany(newCompany);
+                boolean success = UserDAO.createCompany(newCompany);
 
                 if (success) {
                     // Associate the company with the logged-in administrator
@@ -229,6 +245,24 @@ public class CarRentalUI extends Application {
                 } else {
                     System.out.println("Failed to create CarRentalCompany.");
                     // Handle the error (e.g., display an error message to the user)
+                }
+            });
+            
+         // Event handling for creating an operator
+            createOperatorButton.setOnAction(event -> {
+                String newOperatorUsername = usernameTextField.getText();
+                String newOperatorPassword = passwordTextField.getText();
+
+                // Validate the input (you may want to add more validation)
+                if (!newOperatorUsername.isEmpty() && !newOperatorPassword.isEmpty()) {
+                    // Create a new Operator object or use your existing logic to create an operator
+
+                    // Perform any additional logic (e.g., store the operator in the database)
+                     UserDAO.createUser(newOperatorUsername, newOperatorPassword, "Operator");
+
+                    System.out.println("Operator created: " + newOperatorUsername);
+                } else {
+                    System.out.println("Please enter a valid username and password for the new operator.");
                 }
             });
 
