@@ -33,10 +33,10 @@ public class Administrator extends User {
         System.out.println("Operator created: " + operator.getUsername());
     }
 
-    public void registerCar(String make, String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
-        Car car = new Car(make, model, year, carClass, category, features, photos, smoker);
+    public void registerCar(String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
+        Car car = new Car(model, year, carClass, category, features, photos, smoker);
         availableCars.add(car);
-        System.out.println("Registered Car: " + car.getMake() + " " + car.getModel());
+        System.out.println("Registered Car: " + car.getModel());
     }
 
     public void rentOutCar(Car car, Client client, LocalDateTime startDate, LocalDateTime endDate, String status, String description) {
@@ -44,15 +44,15 @@ public class Administrator extends User {
         RentalProtocol protocol = new RentalProtocol(car, client, startDate, endDate, status, description);
         rentalHistory.add(protocol);
         availableCars.remove(car);
-        System.out.println("Rented Out Car: " + car.getMake() + " " + car.getModel() + " to " + client.getName());
+        System.out.println("Rented Out Car: " + car.getModel() + " to " + client.getName());
 
         // Generate renting history report after renting out a car
         generateRentingHistoryReport();
     }
 
-    public void registerClient(int clientId, String name, String contactDetails) {
+    public void registerClient(int clientId, String name, String phone, String address) {
         // Logic to register a client
-        Client client = new Client(clientId, name, contactDetails);
+        Client client = new Client(clientId, name, phone, address);
         System.out.println("Registered Client: " + client.getName());
     }
 

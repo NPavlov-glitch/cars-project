@@ -11,12 +11,12 @@ public class Notification {
             LocalDateTime now = LocalDateTime.now();
             if (protocol.getRentalEndDateTime().isBefore(now)) {
                 System.out.println("Client: " + protocol.getClient().getName() +
-                        ", Car: " + protocol.getRentedCar().getMake() + " " + protocol.getRentedCar().getModel() +
+                        ", Car: " + protocol.getRentedCar().getModel() +
                         ", Rental End Date: " + protocol.getRentalEndDateTime() +
                         " - Expired");
             } else if (protocol.getRentalEndDateTime().minusDays(1).isBefore(now)) {
                 System.out.println("Client: " + protocol.getClient().getName() +
-                        ", Car: " + protocol.getRentedCar().getMake() + " " + protocol.getRentedCar().getModel() +
+                        ", Car: " + protocol.getRentedCar().getModel() +
                         ", Rental End Date: " + protocol.getRentalEndDateTime() +
                         " - Expiring tomorrow");
             }

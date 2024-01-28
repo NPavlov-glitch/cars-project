@@ -16,8 +16,8 @@ public class Operator extends User {
         this.availableCars = new ArrayList<>();
     }
 
-    public void registerClient(int clientId, String name, String contactDetails) {
-        Client client = new Client(clientId, name, contactDetails);
+    public void registerClient(int clientId, String name, String phone, String address) {
+        Client client = new Client(clientId, name, phone, address);
         clients.add(client);
         System.out.println("Client registered: " + client.getName());
     }

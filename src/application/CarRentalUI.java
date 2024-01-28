@@ -22,6 +22,10 @@ public class CarRentalUI extends Application {
     private Button createOperatorButton;
     private User loggedInUser;
     
+    public CarRentalUI(User loggedInUser) {
+        this.loggedInUser = loggedInUser;
+    }
+    
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -94,73 +98,95 @@ public class CarRentalUI extends Application {
             grid.add(phoneLabel, 0, 12);
             TextField phoneTextField = new TextField();
             grid.add(phoneTextField, 1, 12);
+            
+            Label addressLabel = new Label("Address:");
+            grid.add(addressLabel, 0, 13);
+            TextField addressTextField = new TextField();
+            grid.add(addressTextField, 1, 13);
 
             // Add Client button
             Button addClientButton = new Button("Add Client");
-            grid.add(addClientButton, 0, 13, 2, 1);
+            grid.add(addClientButton, 0, 14, 2, 1);
 
             // Rent out a car UI components
             Label rentLabel = new Label("Rent Out a Car");
-            grid.add(rentLabel, 0, 14, 2, 1);
+            grid.add(rentLabel, 0, 15, 2, 1);
 
             // Car selection (for renting out)
             Label carSelectionLabel = new Label("Select Car:");
-            grid.add(carSelectionLabel, 0, 15);
+            grid.add(carSelectionLabel, 0, 16);
             TextField carSelectionTextField = new TextField();
-            grid.add(carSelectionTextField, 1, 15);
+            grid.add(carSelectionTextField, 1, 16);
 
             // Client selection (for renting out)
             Label clientSelectionLabel = new Label("Select Client:");
-            grid.add(clientSelectionLabel, 0, 16);
+            grid.add(clientSelectionLabel, 0, 17);
             TextField clientSelectionTextField = new TextField();
-            grid.add(clientSelectionTextField, 1, 16);
+            grid.add(clientSelectionTextField, 1, 17);
 
             // Rent Out button
             Button rentOutButton = new Button("Rent Out");
-            grid.add(rentOutButton, 0, 17, 2, 1);
+            grid.add(rentOutButton, 0, 18, 2, 1);
             
             Label companyLabel = new Label("Create Rental Company");
-            grid.add(companyLabel, 0, 19, 2, 1);
+            grid.add(companyLabel, 0, 20, 2, 1);
 
 	         // Create Rental Company UI components
 	         Label createCompanyLabel = new Label("Create Rental Company");
-	         grid.add(createCompanyLabel, 0, 19, 2, 1);
+	         grid.add(createCompanyLabel, 0, 20, 2, 1);
 	
 	         Label companyNameLabel = new Label("Company Name:");
-	         grid.add(companyNameLabel, 0, 20);
+	         grid.add(companyNameLabel, 0, 21);
 	         TextField companyNameTextField = new TextField();
-	         grid.add(companyNameTextField, 1, 20);
+	         grid.add(companyNameTextField, 1, 21);
 	
 	         Label companyLocationLabel = new Label("Company Location:");
-	         grid.add(companyLocationLabel, 0, 21);
+	         grid.add(companyLocationLabel, 0, 22);
 	         TextField companyLocationTextField = new TextField();
-	         grid.add(companyLocationTextField, 1, 21);
+	         grid.add(companyLocationTextField, 1, 22);
 	
 	         // Add Rental Company button
 	         Button createCompanyButton = new Button("Create Rental Company");
-	         grid.add(createCompanyButton, 0, 22, 2, 1);
+	         grid.add(createCompanyButton, 0, 23, 2, 1);
 	
 	         // Create Operator UI components
 	         Label createOperatorLabel = new Label("Create Operator");
-	         grid.add(createOperatorLabel, 0, 23, 2, 1);
+	         grid.add(createOperatorLabel, 0, 24, 2, 1);
 	
 	         Label usernameLabel = new Label("Username:");
-	         grid.add(usernameLabel, 0, 24);
+	         grid.add(usernameLabel, 0, 25);
 	         TextField usernameTextField = new TextField();
-	         grid.add(usernameTextField, 1, 24);
+	         grid.add(usernameTextField, 1, 25);
 	
 	         Label passwordLabel = new Label("Password:");
-	         grid.add(passwordLabel, 0, 25);
+	         grid.add(passwordLabel, 0, 26);
 	         TextField passwordTextField = new TextField();
-	         grid.add(passwordTextField, 1, 25);
+	         grid.add(passwordTextField, 1, 26);
 	
 	         // Add Operator button
 	         Button createOperatorButton = new Button("Create Operator");
-	         grid.add(createOperatorButton, 0, 26, 2, 1);
+	         grid.add(createOperatorButton, 0, 27, 2, 1);
+
+	         if (loggedInUser != null && "Operator".equals(loggedInUser.getRole())) {
+	        	    nameLabel.setVisible(true);
+	        	    nameTextField.setVisible(true);
+	        	    phoneLabel.setVisible(true);
+	        	    phoneTextField.setVisible(true);
+	        	    addressLabel.setVisible(true);
+	        	    addressTextField.setVisible(true);
+	        	    addClientButton.setVisible(true);
+	        	} else {
+	        	    nameLabel.setVisible(false);
+	        	    nameTextField.setVisible(false);
+	        	    phoneLabel.setVisible(false);
+	        	    phoneTextField.setVisible(false);
+	        	    addressLabel.setVisible(false);
+	        	    addressTextField.setVisible(false);
+	        	    addClientButton.setVisible(false);
+	        	}
 
             // Event handling for adding a car
             addCarButton.setOnAction(event -> {
-                String make = makeTextField.getText();
                 String model = modelTextField.getText();
 
                 // Retrieve values for additional attributes
@@ -175,7 +201,7 @@ public class CarRentalUI extends Application {
                         boolean smoker = smokerCheckBox.isSelected();
 
                         // Create a new Car object using the provided details
-                        Car car = new Car(make, model, year, carClass, category, features, photos, smoker);
+                        Car car = new Car(model, year, carClass, category, features, photos, smoker);
 
                         // Add the created car to the list or perform any other logic
                         cars.add(car);
@@ -195,14 +221,32 @@ public class CarRentalUI extends Application {
             addClientButton.setOnAction(event -> {
                 String clientName = nameTextField.getText();
                 String clientPhone = phoneTextField.getText();
+                String clientAddress = addressTextField.getText();
 
-                // Create a new Client object using the provided details
-                Client client = new Client(clients.size() + 1, clientName, clientPhone);
+                if ( !clientName.isEmpty() && isValidPhoneNumber(clientPhone) && !clientAddress.isEmpty() ) {
+                    
+                    Client authenticatedClient = UserDAO.authenticateClient(clientPhone);
 
-                // Add the created client to the list or perform any other logic
-                clients.add(client);
+                    if ( authenticatedClient == null ) {
+                    	Client client = new Client(clients.size() + 1, clientName, clientPhone, clientAddress);
+                    	
+                    	boolean success = UserDAO.createClient(client);
 
-                System.out.println("Added Client: " + client);
+                        if ( success == true ) {
+                        	System.out.println("Added Client: " + client.getName());
+                        } else {
+                        	System.err.println("Failed to create client!");
+                        }
+                    } else {
+                        // Authentication failed
+                    	System.err.println("Clien with this phone already exists");
+                    }
+
+                    
+                } else {
+                	System.err.println("Please add correct client data!");
+                }
+
             });
 
             // Event handling for renting out a car
@@ -274,6 +318,11 @@ public class CarRentalUI extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private boolean isValidPhoneNumber(String phone) {
+        String phoneRegex = "^[\\d\\-\\+\\s]+$";
+        return phone.matches(phoneRegex);
     }
 
     public static void main(String[] args) {

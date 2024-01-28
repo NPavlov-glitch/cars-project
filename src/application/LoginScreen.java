@@ -49,7 +49,7 @@ public class LoginScreen extends Application {
 
                 if ( authenticatedUser != null ) {
                     // Authentication successful
-                    openMainApplication();
+                    openMainApplication(authenticatedUser);
                 } else {
                     // Authentication failed
                     messageLabel.setText("Invalid username or password");
@@ -65,9 +65,9 @@ public class LoginScreen extends Application {
         }
     }
 
-    private void openMainApplication() {
+    private void openMainApplication(User authenticatedUser) {
     	loginStage.close();
-    	CarRentalUI carRentalUI = new CarRentalUI();
+    	CarRentalUI carRentalUI = new CarRentalUI(authenticatedUser);
         carRentalUI.start(new Stage());
     }
 

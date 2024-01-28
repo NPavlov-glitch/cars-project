@@ -3,13 +3,15 @@ package application;
 public class Client {
     private int clientId;
     private String name;
-    private String contactDetails;
+    private String phone;
+    private String address;
 
     // Constructors
-    public Client(int clientId, String name, String contactDetails) {
+    public Client(int clientId, String name, String phone, String address) {
         this.clientId = clientId;
         this.name = name;
-        this.contactDetails = contactDetails;
+        this.phone = phone;
+        this.address = address;
     }
 
     // Getters and Setters
@@ -29,11 +31,19 @@ public class Client {
         this.name = name;
     }
 
-    public String getContactDetails() {
-        return contactDetails;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setContactDetails(String contactDetails) {
-        this.contactDetails = contactDetails;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

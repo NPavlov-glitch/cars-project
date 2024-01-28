@@ -1,7 +1,6 @@
 package application;
 
 public class Car {
-    private String make;
     private String model;
     private int year;
     private String carClass; // luxury, family, city
@@ -11,8 +10,7 @@ public class Car {
     private boolean smoker; // true if smoker, false if non-smoker
 
     // Constructors
-    public Car(String make, String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
-        this.make = make;
+    public Car(String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
         this.model = model;
         this.year = year;
         this.carClass = carClass;
@@ -23,13 +21,6 @@ public class Car {
     }
 
     // Getters and Setters
-    public String getMake() {
-        return make;
-    }
-
-    public void setMake(String make) {
-        this.make = make;
-    }
 
     public String getModel() {
         return model;
