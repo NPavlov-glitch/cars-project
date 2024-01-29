@@ -19,7 +19,6 @@ public class CarRentalUI extends Application {
 	private List<Car> cars = new ArrayList<>();
     private List<Client> clients = new ArrayList<>();
     private Operator operator;
-    private Button createOperatorButton;
     private User loggedInUser;
     
     public CarRentalUI(User loggedInUser) {
@@ -202,6 +201,14 @@ public class CarRentalUI extends Application {
 
                         // Create a new Car object using the provided details
                         Car car = new Car(model, year, carClass, category, features, photos, smoker);
+                        
+                        boolean success = UserDAO.createCar(car);
+                        
+                        if (success == true) {
+                        	System.out.println("Car added: " + car.getModel() + " " + car.getYear());
+                        } else {
+                        	System.err.println("Failed to create a car!");
+                        }
 
                         // Add the created car to the list or perform any other logic
                         cars.add(car);

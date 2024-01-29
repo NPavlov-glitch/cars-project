@@ -1,6 +1,7 @@
 package application;
 
 public class Car {
+	private int id;
     private String model;
     private int year;
     private String carClass; // luxury, family, city
@@ -11,7 +12,7 @@ public class Car {
 
     // Constructors
     public Car(String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
-        this.model = model;
+    	this.model = model;
         this.year = year;
         this.carClass = carClass;
         this.category = category;
@@ -22,6 +23,14 @@ public class Car {
 
     // Getters and Setters
 
+    public int getId() {
+    	return id;
+    }
+    
+    public void setId(int id) {
+    	this.id = id;
+    }
+    
     public String getModel() {
         return model;
     }

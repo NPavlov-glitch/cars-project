@@ -9,8 +9,10 @@ public class UserDAO {
     private static final String INSERT_USER = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
     private static final String INSERT_COMPANY = "INSERT INTO company (name, location) VALUES (?, ?)";
     private static final String INSERT_CLIENT = "INSERT INTO clients (name, phone, address) VALUES (?, ?, ?)";
+    private static final String INSERT_CAR = "INSERT INTO cars (model, year, class, category, features, photos, smoker) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_USER = "SELECT * FROM users WHERE username = ? AND password = ?";
     private static final String SELECT_CLIENT = "SELECT * FROM clients WHERE phone = ?";
+    private static final String SELECT_CAR = "SELECT * FROM cars WHERE id = ?";
     private static final String CHECK_USERNAME_AVAILABILITY = "SELECT * FROM users WHERE username = ?";
 
     public static boolean createUser(String username, String password, String role) {
@@ -26,6 +28,24 @@ public class UserDAO {
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, role);
             System.out.println("user created successfully!");
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public static boolean createCar(Car car) {
+        try (Connection connection = DatabaseConnector.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CAR)) {
+            preparedStatement.setString(1, car.getModel());
+            preparedStatement.setInt(2, car.getYear());
+            preparedStatement.setString(3, car.getCarClass());
+            preparedStatement.setString(4, car.getCategory());
+            preparedStatement.setString(5, car.getFeatures());
+            preparedStatement.setString(6, car.getPhotos());
+            preparedStatement.setBoolean(7, car.isSmoker());
+            
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,4 +136,5 @@ public class UserDAO {
         }
         return null;
     }
+
 }

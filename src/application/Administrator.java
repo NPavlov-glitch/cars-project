@@ -33,11 +33,6 @@ public class Administrator extends User {
         System.out.println("Operator created: " + operator.getUsername());
     }
 
-    public void registerCar(String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
-        Car car = new Car(model, year, carClass, category, features, photos, smoker);
-        availableCars.add(car);
-        System.out.println("Registered Car: " + car.getModel());
-    }
 
     public void rentOutCar(Car car, Client client, LocalDateTime startDate, LocalDateTime endDate, String status, String description) {
         // Logic to rent out a car
@@ -48,12 +43,6 @@ public class Administrator extends User {
 
         // Generate renting history report after renting out a car
         generateRentingHistoryReport();
-    }
-
-    public void registerClient(int clientId, String name, String phone, String address) {
-        // Logic to register a client
-        Client client = new Client(clientId, name, phone, address);
-        System.out.println("Registered Client: " + client.getName());
     }
 
     public void generateAvailableCarsReport() {
