@@ -45,11 +45,6 @@ public class CarRentalUI extends Application {
             Label carLabel = new Label("Car Details");
             grid.add(carLabel, 0, 0, 2, 1);
 
-            Label makeLabel = new Label("Make:");
-            grid.add(makeLabel, 0, 1);
-            TextField makeTextField = new TextField();
-            grid.add(makeTextField, 1, 1);
-
             Label modelLabel = new Label("Model:");
             grid.add(modelLabel, 0, 2);
             TextField modelTextField = new TextField();
@@ -111,26 +106,6 @@ public class CarRentalUI extends Application {
             // Add Client button
             Button addClientButton = new Button("Add Client");
             grid.add(addClientButton, 0, 14, 2, 1);
-
-            // Rent out a car UI components
-            Label rentLabel = new Label("Rent Out a Car");
-            grid.add(rentLabel, 0, 15, 2, 1);
-
-            // Car selection (for renting out)
-            Label carSelectionLabel = new Label("Select Car:");
-            grid.add(carSelectionLabel, 0, 16);
-            TextField carSelectionTextField = new TextField();
-            grid.add(carSelectionTextField, 1, 16);
-
-            // Client selection (for renting out)
-            Label clientSelectionLabel = new Label("Select Client:");
-            grid.add(clientSelectionLabel, 0, 17);
-            TextField clientSelectionTextField = new TextField();
-            grid.add(clientSelectionTextField, 1, 17);
-
-            // Rent Out button
-            Button rentOutButton = new Button("Rent Out");
-            grid.add(rentOutButton, 0, 18, 2, 1);
             
             Label companyLabel = new Label("Create Rental Company");
             grid.add(companyLabel, 0, 20, 2, 1);
