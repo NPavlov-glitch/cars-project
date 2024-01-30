@@ -1,24 +1,29 @@
 package application;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 public class CarRentalUI extends Application {
 	
 	private List<Car> cars = new ArrayList<>();
-    private List<Client> clients = new ArrayList<>();
-    private Operator operator;
     private User loggedInUser;
     
     public CarRentalUI(User loggedInUser) {
@@ -34,7 +39,7 @@ public class CarRentalUI extends Application {
             GridPane grid = new GridPane();
             grid.setHgap(10);
             grid.setVgap(10);
-            grid.setPadding(new Insets(20, 20, 20, 20));
+            grid.setPadding(new Insets(40, 40, 40, 40));
 
             // Car details UI components
             Label carLabel = new Label("Car Details");
@@ -165,6 +170,9 @@ public class CarRentalUI extends Application {
 	         // Add Operator button
 	         Button createOperatorButton = new Button("Create Operator");
 	         grid.add(createOperatorButton, 0, 27, 2, 1);
+	         
+	         VBox rentalProtocolUI = createRentalProtocolUI();
+	         grid.add(rentalProtocolUI, 0, 19, 2, 1);
 
 	         if (loggedInUser != null && "Operator".equals(loggedInUser.getRole())) {
 	        	    nameLabel.setVisible(true);
@@ -235,7 +243,7 @@ public class CarRentalUI extends Application {
                     Client authenticatedClient = UserDAO.authenticateClient(clientPhone);
 
                     if ( authenticatedClient == null ) {
-                    	Client client = new Client(clients.size() + 1, clientName, clientPhone, clientAddress);
+                    	Client client = new Client(clientName, clientPhone, clientAddress);
                     	
                     	boolean success = UserDAO.createClient(client);
 
@@ -258,23 +266,7 @@ public class CarRentalUI extends Application {
 
             // Event handling for renting out a car
             rentOutButton.setOnAction(event -> {
-                // Retrieve values for car selection and client selection
-                int carIndex = Integer.parseInt(carSelectionTextField.getText()) - 1;
-                int clientIndex = Integer.parseInt(clientSelectionTextField.getText()) - 1;
-
-                // Check if the indices are valid
-                if (carIndex >= 0 && carIndex < cars.size() && clientIndex >= 0 && clientIndex < clients.size()) {
-                    // Retrieve the selected car and client
-                    Car selectedCar = cars.get(carIndex);
-                    Client selectedClient = clients.get(clientIndex);
-
-                    // Perform the logic to rent out the car using the Operator class
-                    operator.rentOutCar(selectedCar, selectedClient, LocalDateTime.now(), LocalDateTime.now().plusDays(7), "smooth", "No issues reported.");
-
-                    System.out.println("Rented out Car: " + selectedCar + " to Client: " + selectedClient);
-                } else {
-                    System.out.println("Invalid car or client selection");
-                }
+               
             });
             
          // Event handling for creating a rental company
@@ -282,20 +274,16 @@ public class CarRentalUI extends Application {
                 String companyName = companyNameTextField.getText();
                 String companyLocation = companyLocationTextField.getText();
 
-                // Create a new CarRentalCompany
                 CarRentalCompany newCompany = new CarRentalCompany(companyName, companyLocation);
 
-                // Insert the company information into the database
                 boolean success = UserDAO.createCompany(newCompany);
 
                 if (success) {
-                    // Associate the company with the logged-in administrator
 //                    loggedInUser.setCarRentalCompany(newCompany);
 
                     System.out.println("Created CarRentalCompany: " + newCompany.getName());
                 } else {
                     System.out.println("Failed to create CarRentalCompany.");
-                    // Handle the error (e.g., display an error message to the user)
                 }
             });
             
@@ -304,11 +292,7 @@ public class CarRentalUI extends Application {
                 String newOperatorUsername = usernameTextField.getText();
                 String newOperatorPassword = passwordTextField.getText();
 
-                // Validate the input (you may want to add more validation)
                 if (!newOperatorUsername.isEmpty() && !newOperatorPassword.isEmpty()) {
-                    // Create a new Operator object or use your existing logic to create an operator
-
-                    // Perform any additional logic (e.g., store the operator in the database)
                      UserDAO.createUser(newOperatorUsername, newOperatorPassword, "Operator");
 
                     System.out.println("Operator created: " + newOperatorUsername);
@@ -317,7 +301,7 @@ public class CarRentalUI extends Application {
                 }
             });
 
-            Scene scene = new Scene(grid, 500, 600);
+            Scene scene = new Scene(grid, 600, 800);
             primaryStage.setScene(scene);
 
             primaryStage.show();
@@ -326,6 +310,108 @@ public class CarRentalUI extends Application {
             e.printStackTrace();
         }
     }
+    
+    public VBox createRentalProtocolUI() {
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setPadding(new Insets(20, 20, 20, 20));
+
+        GridPane carGrid = new GridPane();
+        GridPane clientGrid = new GridPane();
+        Label carSelectionLabel = new Label("Select Car:");
+        carGrid.add(carSelectionLabel, 0, 0);
+
+        ComboBox<SelectOptions> carSelectionComboBox = new ComboBox<>();
+        ObservableList<SelectOptions> carOptions = FXCollections.observableArrayList();
+
+        ComboBox<SelectOptions> clientSelectionComboBox = new ComboBox<>();
+        ObservableList<SelectOptions> clientOptions = FXCollections.observableArrayList();
+
+        List<Car> allCars = UserDAO.getAllCars();
+        for (Car car : allCars) {
+            SelectOptions carOption = new SelectOptions(car.getId(), car.getModel() + " " + car.getYear());
+            carOptions.add(carOption);
+        }
+
+        List<Client> allClients = UserDAO.getAllClients();
+        for (Client client : allClients) {
+            SelectOptions clientOption = new SelectOptions(client.getId(), client.getName());
+            clientOptions.add(clientOption);
+        }
+
+        carSelectionComboBox.setItems(carOptions);
+        carSelectionComboBox.setConverter(new StringConverter<SelectOptions>() {
+            @Override
+            public String toString(SelectOptions carOption) {
+                return carOption.getDisplayText();
+            }
+
+            @Override
+            public SelectOptions fromString(String string) {
+                // Not needed for this example
+                return null;
+            }
+        });
+        carGrid.add(carSelectionComboBox, 1, 0);
+
+        clientSelectionComboBox.setItems(clientOptions);
+        clientSelectionComboBox.setConverter(new StringConverter<SelectOptions>() {
+            @Override
+            public String toString(SelectOptions clientOption) {
+                return clientOption.getDisplayText();
+            }
+
+            @Override
+            public SelectOptions fromString(String string) {
+                // Not needed for this example
+                return null;
+            }
+        });
+        clientGrid.add(clientSelectionComboBox, 1, 0);
+
+        Label rentalStartDateLabel = new Label("Rental Start Date:");
+        DatePicker rentalStartDatePicker = new DatePicker();
+        carGrid.add(rentalStartDateLabel, 0, 1);
+        carGrid.add(rentalStartDatePicker, 1, 1);
+
+        Label rentalEndDateLabel = new Label("Rental End Date:");
+        DatePicker rentalEndDatePicker = new DatePicker();
+        carGrid.add(rentalEndDateLabel, 0, 2);
+        carGrid.add(rentalEndDatePicker, 1, 2);
+
+        Label rentalNotesLabel = new Label("Rental Notes:");
+        TextField rentalNotesTextField = new TextField();
+        carGrid.add(rentalNotesLabel, 0, 3);
+        carGrid.add(rentalNotesTextField, 1, 3);
+
+        Button rentOutButton = new Button("Rent Out");
+
+        rentOutButton.setOnAction(event -> {
+            SelectOptions selectedCarOption    = carSelectionComboBox.getValue();
+            SelectOptions selectedClientOption = clientSelectionComboBox.getValue();
+            LocalDate 	  startDatePicker 	   = rentalStartDatePicker.getValue();
+            LocalDate 	  endDatePicker 	   = rentalEndDatePicker.getValue();
+            String 		  rentalNotes 		   = rentalNotesTextField.getText();
+            	
+            System.out.println("Car ID: " + selectedCarOption.getId() + " Client ID: " + selectedClientOption.getId() );
+            boolean success = UserDAO.createRentalProtocol(selectedClientOption, selectedCarOption,
+            		startDatePicker, endDatePicker,
+                    rentalNotes);
+            
+            if ( success ) {
+            	System.out.println("Rental Protocol Created: " + selectedClientOption.getDisplayText() + " : " + selectedCarOption.getDisplayText());
+            } else {
+            	System.err.println("Error in creating a rental protocol!");
+            }
+        });
+
+        vbox.getChildren().addAll(carGrid, clientGrid, rentOutButton);
+
+        return vbox;
+    }
+
+
+
     
     private boolean isValidPhoneNumber(String phone) {
         String phoneRegex = "^[\\d\\-\\+\\s]+$";

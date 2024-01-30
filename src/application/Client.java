@@ -1,26 +1,32 @@
 package application;
 
 public class Client {
-    private int clientId;
+    private int id;
     private String name;
     private String phone;
     private String address;
 
     // Constructors
-    public Client(int clientId, String name, String phone, String address) {
-        this.clientId = clientId;
+    public Client(int id, String name, String phone, String address) {
+        this.id = id;
+    	this.name = name;
+        this.phone = phone;
+        this.address = address;
+    }
+    
+    public Client(String name, String phone, String address) {
         this.name = name;
         this.phone = phone;
         this.address = address;
     }
 
     // Getters and Setters
-    public int getClientId() {
-        return clientId;
+    public int getId() {
+        return id;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

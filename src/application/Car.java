@@ -11,6 +11,17 @@ public class Car {
     private boolean smoker; // true if smoker, false if non-smoker
 
     // Constructors
+    public Car(int id, String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
+    	this.id = id;
+    	this.model = model;
+        this.year = year;
+        this.carClass = carClass;
+        this.category = category;
+        this.features = features;
+        this.photos = photos;
+        this.smoker = smoker;
+    }
+    
     public Car(String model, int year, String carClass, String category, String features, String photos, boolean smoker) {
     	this.model = model;
         this.year = year;
