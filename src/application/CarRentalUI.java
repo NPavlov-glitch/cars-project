@@ -15,9 +15,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -40,241 +42,23 @@ public class CarRentalUI extends Application {
             grid.setHgap(10);
             grid.setVgap(10);
             grid.setPadding(new Insets(40, 40, 40, 40));
-
-            // Car details UI components
-            Label carLabel = new Label("Car Details");
-            grid.add(carLabel, 0, 0, 2, 1);
-
-            Label modelLabel = new Label("Model:");
-            grid.add(modelLabel, 0, 2);
-            TextField modelTextField = new TextField();
-            grid.add(modelTextField, 1, 2);
-
-            Label yearLabel = new Label("Year:");
-            grid.add(yearLabel, 0, 3);
-            TextField yearTextField = new TextField();
-            grid.add(yearTextField, 1, 3);
-
-            Label carClassLabel = new Label("Car Class:");
-            grid.add(carClassLabel, 0, 4);
-            TextField carClassTextField = new TextField();
-            grid.add(carClassTextField, 1, 4);
-
-            Label categoryLabel = new Label("Category:");
-            grid.add(categoryLabel, 0, 5);
-            TextField categoryTextField = new TextField();
-            grid.add(categoryTextField, 1, 5);
-
-            Label featuresLabel = new Label("Features:");
-            grid.add(featuresLabel, 0, 6);
-            TextField featuresTextField = new TextField();
-            grid.add(featuresTextField, 1, 6);
-
-            Label photosLabel = new Label("Photos:");
-            grid.add(photosLabel, 0, 7);
-            TextField photosTextField = new TextField();
-            grid.add(photosTextField, 1, 7);
-
-            Label smokerLabel = new Label("Smoker:");
-            grid.add(smokerLabel, 0, 8);
-            CheckBox smokerCheckBox = new CheckBox();
-            grid.add(smokerCheckBox, 1, 8);
-
-            // Add Car button
-            Button addCarButton = new Button("Add Car");
-            grid.add(addCarButton, 0, 9, 2, 1);
-
-            // Client details UI components
-            Label clientLabel = new Label("Client Details");
-            grid.add(clientLabel, 0, 10, 2, 1);
-
-            Label nameLabel = new Label("Name:");
-            grid.add(nameLabel, 0, 11);
-            TextField nameTextField = new TextField();
-            grid.add(nameTextField, 1, 11);
-
-            Label phoneLabel = new Label("Phone:");
-            grid.add(phoneLabel, 0, 12);
-            TextField phoneTextField = new TextField();
-            grid.add(phoneTextField, 1, 12);
             
-            Label addressLabel = new Label("Address:");
-            grid.add(addressLabel, 0, 13);
-            TextField addressTextField = new TextField();
-            grid.add(addressTextField, 1, 13);
-
-            // Add Client button
-            Button addClientButton = new Button("Add Client");
-            grid.add(addClientButton, 0, 14, 2, 1);
-            
-            Label companyLabel = new Label("Create Rental Company");
-            grid.add(companyLabel, 0, 20, 2, 1);
-
-	         // Create Rental Company UI components
-	         Label createCompanyLabel = new Label("Create Rental Company");
-	         grid.add(createCompanyLabel, 0, 20, 2, 1);
-	
-	         Label companyNameLabel = new Label("Company Name:");
-	         grid.add(companyNameLabel, 0, 21);
-	         TextField companyNameTextField = new TextField();
-	         grid.add(companyNameTextField, 1, 21);
-	
-	         Label companyLocationLabel = new Label("Company Location:");
-	         grid.add(companyLocationLabel, 0, 22);
-	         TextField companyLocationTextField = new TextField();
-	         grid.add(companyLocationTextField, 1, 22);
-	
-	         // Add Rental Company button
-	         Button createCompanyButton = new Button("Create Rental Company");
-	         grid.add(createCompanyButton, 0, 23, 2, 1);
-	
-	         // Create Operator UI components
-	         Label createOperatorLabel = new Label("Create Operator");
-	         grid.add(createOperatorLabel, 0, 24, 2, 1);
-	
-	         Label usernameLabel = new Label("Username:");
-	         grid.add(usernameLabel, 0, 25);
-	         TextField usernameTextField = new TextField();
-	         grid.add(usernameTextField, 1, 25);
-	
-	         Label passwordLabel = new Label("Password:");
-	         grid.add(passwordLabel, 0, 26);
-	         TextField passwordTextField = new TextField();
-	         grid.add(passwordTextField, 1, 26);
-	
-	         // Add Operator button
-	         Button createOperatorButton = new Button("Create Operator");
-	         grid.add(createOperatorButton, 0, 27, 2, 1);
+            addCarDetails(grid);
+            addClientDetails(grid);
+            addCompanyDetails(grid);
+            addOperatorDetails(grid);
 	         
-	         VBox rentalProtocolUI = createRentalProtocolUI();
-	         grid.add(rentalProtocolUI, 0, 19, 2, 1);
-
-	         if (loggedInUser != null && "Operator".equals(loggedInUser.getRole())) {
-	        	    nameLabel.setVisible(true);
-	        	    nameTextField.setVisible(true);
-	        	    phoneLabel.setVisible(true);
-	        	    phoneTextField.setVisible(true);
-	        	    addressLabel.setVisible(true);
-	        	    addressTextField.setVisible(true);
-	        	    addClientButton.setVisible(true);
-	        	} else {
-	        	    nameLabel.setVisible(false);
-	        	    nameTextField.setVisible(false);
-	        	    phoneLabel.setVisible(false);
-	        	    phoneTextField.setVisible(false);
-	        	    addressLabel.setVisible(false);
-	        	    addressTextField.setVisible(false);
-	        	    addClientButton.setVisible(false);
-	        	}
-
-            // Event handling for adding a car
-            addCarButton.setOnAction(event -> {
-                String model = modelTextField.getText();
-
-                // Retrieve values for additional attributes
-                String yearText = yearTextField.getText();
-                if (!yearText.isEmpty()) {
-                    try {
-                        int year = Integer.parseInt(yearText);
-                        String carClass = carClassTextField.getText();
-                        String category = categoryTextField.getText();
-                        String features = featuresTextField.getText();
-                        String photos = photosTextField.getText();
-                        boolean smoker = smokerCheckBox.isSelected();
-
-                        // Create a new Car object using the provided details
-                        Car car = new Car(model, year, carClass, category, features, photos, smoker);
-                        
-                        boolean success = UserDAO.createCar(car);
-                        
-                        if (success == true) {
-                        	System.out.println("Car added: " + car.getModel() + " " + car.getYear());
-                        } else {
-                        	System.err.println("Failed to create a car!");
-                        }
-
-                        // Add the created car to the list or perform any other logic
-                        cars.add(car);
-
-                        System.out.println("Added Car: " + car);
-                    } catch (NumberFormatException e) {
-                        System.err.println("Invalid year format: " + yearText);
-                        // Handle the error (e.g., display an error message to the user)
-                    }
-                } else {
-                    System.err.println("Year field is empty");
-                    // Handle the error (e.g., display an error message to the user)
-                }
-           
-            });
-
-            addClientButton.setOnAction(event -> {
-                String clientName = nameTextField.getText();
-                String clientPhone = phoneTextField.getText();
-                String clientAddress = addressTextField.getText();
-
-                if ( !clientName.isEmpty() && isValidPhoneNumber(clientPhone) && !clientAddress.isEmpty() ) {
-                    
-                    Client authenticatedClient = UserDAO.authenticateClient(clientPhone);
-
-                    if ( authenticatedClient == null ) {
-                    	Client client = new Client(clientName, clientPhone, clientAddress);
-                    	
-                    	boolean success = UserDAO.createClient(client);
-
-                        if ( success == true ) {
-                        	System.out.println("Added Client: " + client.getName());
-                        } else {
-                        	System.err.println("Failed to create client!");
-                        }
-                    } else {
-                        // Authentication failed
-                    	System.err.println("Clien with this phone already exists");
-                    }
-
-                    
-                } else {
-                	System.err.println("Please add correct client data!");
-                }
-
-            });
-
-            // Event handling for renting out a car
-            rentOutButton.setOnAction(event -> {
-               
-            });
+			VBox rentalProtocolUI = createRentalProtocolUI();
+			grid.add(rentalProtocolUI, 5, 6, 2, 1);
+			displayElementsBasedOnRole(grid);
+	         
+            Button openCarListButton = new Button("Open Car List");
+            openCarListButton.setOnAction(event -> openCarListWindow());
+            grid.add(openCarListButton, 0, 15, 2, 1);
             
-         // Event handling for creating a rental company
-            createCompanyButton.setOnAction(event -> {
-                String companyName = companyNameTextField.getText();
-                String companyLocation = companyLocationTextField.getText();
-
-                CarRentalCompany newCompany = new CarRentalCompany(companyName, companyLocation);
-
-                boolean success = UserDAO.createCompany(newCompany);
-
-                if (success) {
-//                    loggedInUser.setCarRentalCompany(newCompany);
-
-                    System.out.println("Created CarRentalCompany: " + newCompany.getName());
-                } else {
-                    System.out.println("Failed to create CarRentalCompany.");
-                }
-            });
-            
-         // Event handling for creating an operator
-            createOperatorButton.setOnAction(event -> {
-                String newOperatorUsername = usernameTextField.getText();
-                String newOperatorPassword = passwordTextField.getText();
-
-                if (!newOperatorUsername.isEmpty() && !newOperatorPassword.isEmpty()) {
-                     UserDAO.createUser(newOperatorUsername, newOperatorPassword, "Operator");
-
-                    System.out.println("Operator created: " + newOperatorUsername);
-                } else {
-                    System.out.println("Please enter a valid username and password for the new operator.");
-                }
-            });
+            Button openProtocolsListButton = new Button("Open Protocols List");
+            openProtocolsListButton.setOnAction(event -> openRentalsListWindow());
+            grid.add(openProtocolsListButton, 0, 17, 2, 1);
 
             Scene scene = new Scene(grid, 600, 800);
             primaryStage.setScene(scene);
@@ -385,13 +169,299 @@ public class CarRentalUI extends Application {
         return vbox;
     }
 
+    private void openCarListWindow() {
+        Stage carListStage = new Stage();
+        carListStage.initModality(Modality.APPLICATION_MODAL);
+        carListStage.setTitle("Car List");
 
+        VBox carListLayout = new VBox(10);
+        carListLayout.setPadding(new Insets(20, 20, 20, 20));
 
+        // Fetch the list of cars from the database
+        List<Car> allCars = UserDAO.getAllCars();
+
+        ObservableList<String> carStrings = FXCollections.observableArrayList();
+        for (Car car : allCars) {
+            carStrings.add(car.getModel() + " " + car.getYear());
+        }
+
+        ListView<String> carListView = new ListView<>(carStrings);
+        carListLayout.getChildren().add(carListView);
+
+        Scene carListScene = new Scene(carListLayout, 300, 200);
+        carListStage.setScene(carListScene);
+        carListStage.show();
+    }
+
+    private void openRentalsListWindow() {
+        Stage carListStage = new Stage();
+        carListStage.initModality(Modality.APPLICATION_MODAL);
+        carListStage.setTitle("Protocols List");
+
+        VBox carListLayout = new VBox(10);
+        carListLayout.setPadding(new Insets(20, 20, 20, 20));
+
+        // Fetch the list of cars from the database
+        List<RentalProtocol> allProtocols = UserDAO.getAllRentalProtocols();
+
+        ObservableList<String> carStrings = FXCollections.observableArrayList();
+        for (RentalProtocol protocol : allProtocols) {
+            carStrings.add(protocol.getRentalStartDateTime() + " " + protocol.getRentalEndDateTime());
+        }
+
+        ListView<String> carListView = new ListView<>(carStrings);
+        carListLayout.getChildren().add(carListView);
+
+        Scene carListScene = new Scene(carListLayout, 300, 200);
+        carListStage.setScene(carListScene);
+        carListStage.show();
+    }
     
     private boolean isValidPhoneNumber(String phone) {
         String phoneRegex = "^[\\d\\-\\+\\s]+$";
         return phone.matches(phoneRegex);
     }
+    
+    private void addCarDetails(GridPane grid) {
+    	// Car details UI components
+        Label carLabel = new Label("Car Details");
+        grid.add(carLabel, 0, 0, 2, 1);
+
+        Label modelLabel = new Label("Model:");
+        grid.add(modelLabel, 0, 2);
+        TextField modelTextField = new TextField();
+        grid.add(modelTextField, 1, 2);
+
+        Label yearLabel = new Label("Year:");
+        grid.add(yearLabel, 0, 3);
+        TextField yearTextField = new TextField();
+        grid.add(yearTextField, 1, 3);
+
+        Label carClassLabel = new Label("Car Class:");
+        grid.add(carClassLabel, 0, 4);
+        TextField carClassTextField = new TextField();
+        grid.add(carClassTextField, 1, 4);
+
+        Label categoryLabel = new Label("Category:");
+        grid.add(categoryLabel, 0, 5);
+        TextField categoryTextField = new TextField();
+        grid.add(categoryTextField, 1, 5);
+
+        Label featuresLabel = new Label("Features:");
+        grid.add(featuresLabel, 0, 6);
+        TextField featuresTextField = new TextField();
+        grid.add(featuresTextField, 1, 6);
+
+        Label photosLabel = new Label("Photos:");
+        grid.add(photosLabel, 0, 7);
+        TextField photosTextField = new TextField();
+        grid.add(photosTextField, 1, 7);
+
+        Label smokerLabel = new Label("Smoker:");
+        grid.add(smokerLabel, 0, 8);
+        CheckBox smokerCheckBox = new CheckBox();
+        grid.add(smokerCheckBox, 1, 8);
+
+        // Add Car button
+        Button addCarButton = new Button("Add Car");
+        grid.add(addCarButton, 0, 9, 2, 1);
+        
+        addCarButton.setOnAction(event -> {
+            String model = modelTextField.getText();
+
+            // Retrieve values for additional attributes
+            String yearText = yearTextField.getText();
+            if (!yearText.isEmpty()) {
+                try {
+                    int year = Integer.parseInt(yearText);
+                    String carClass = carClassTextField.getText();
+                    String category = categoryTextField.getText();
+                    String features = featuresTextField.getText();
+                    String photos = photosTextField.getText();
+                    boolean smoker = smokerCheckBox.isSelected();
+
+                    // Create a new Car object using the provided details
+                    Car car = new Car(model, year, carClass, category, features, photos, smoker);
+                    
+                    boolean success = UserDAO.createCar(car);
+                    
+                    if (success == true) {
+                    	System.out.println("Car added: " + car.getModel() + " " + car.getYear());
+                    } else {
+                    	System.err.println("Failed to create a car!");
+                    }
+
+                    // Add the created car to the list or perform any other logic
+                    cars.add(car);
+
+                    System.out.println("Added Car: " + car);
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid year format: " + yearText);
+                    // Handle the error (e.g., display an error message to the user)
+                }
+            } else {
+                System.err.println("Year field is empty");
+                // Handle the error (e.g., display an error message to the user)
+            }
+       
+        });
+
+    }
+
+    private void addClientDetails(GridPane grid) {
+    	 // Client details UI components
+        Label clientLabel = new Label("Client Details");
+        grid.add(clientLabel, 0, 10, 2, 1);
+
+        Label nameLabel = new Label("Name:");
+        grid.add(nameLabel, 0, 11);
+        TextField nameTextField = new TextField();
+        grid.add(nameTextField, 1, 11);
+
+        Label phoneLabel = new Label("Phone:");
+        grid.add(phoneLabel, 0, 12);
+        TextField phoneTextField = new TextField();
+        grid.add(phoneTextField, 1, 12);
+        
+        Label addressLabel = new Label("Address:");
+        grid.add(addressLabel, 0, 13);
+        TextField addressTextField = new TextField();
+        grid.add(addressTextField, 1, 13);
+        
+     // Add Client button
+        Button addClientButton = new Button("Add Client");
+        grid.add(addClientButton, 0, 14, 2, 1);
+        
+        addClientButton.setOnAction(event -> {
+            String clientName = nameTextField.getText();
+            String clientPhone = phoneTextField.getText();
+            String clientAddress = addressTextField.getText();
+
+            if ( !clientName.isEmpty() && isValidPhoneNumber(clientPhone) && !clientAddress.isEmpty() ) {
+                
+                Client authenticatedClient = UserDAO.authenticateClient(clientPhone);
+
+                if ( authenticatedClient == null ) {
+                	Client client = new Client(clientName, clientPhone, clientAddress);
+                	
+                	boolean success = UserDAO.createClient(client);
+
+                    if ( success == true ) {
+                    	System.out.println("Added Client: " + client.getName());
+                    } else {
+                    	System.err.println("Failed to create client!");
+                    }
+                } else {
+                    // Authentication failed
+                	System.err.println("Clien with this phone already exists");
+                }
+
+                
+            } else {
+            	System.err.println("Please add correct client data!");
+            }
+
+        });
+        
+        
+    }
+
+    private void addCompanyDetails(GridPane grid) {
+    	Label companyLabel = new Label("Create Rental Company");
+        grid.add(companyLabel, 0, 20, 2, 1);
+        // Create Rental Company UI components
+        Label createCompanyLabel = new Label("Create Rental Company");
+        grid.add(createCompanyLabel, 0, 20, 2, 1);
+
+        Label companyNameLabel = new Label("Company Name:");
+        grid.add(companyNameLabel, 0, 21);
+        TextField companyNameTextField = new TextField();
+        grid.add(companyNameTextField, 1, 21);
+
+        Label companyLocationLabel = new Label("Company Location:");
+        grid.add(companyLocationLabel, 0, 22);
+        TextField companyLocationTextField = new TextField();
+        grid.add(companyLocationTextField, 1, 22);
+
+        // Add Rental Company button
+        Button createCompanyButton = new Button("Create Rental Company");
+        grid.add(createCompanyButton, 0, 23, 2, 1);
+        
+        createCompanyButton.setOnAction(event -> {
+            String companyName = companyNameTextField.getText();
+            String companyLocation = companyLocationTextField.getText();
+
+            CarRentalCompany newCompany = new CarRentalCompany(companyName, companyLocation);
+
+            boolean success = UserDAO.createCompany(newCompany);
+
+            if (success) {
+
+                System.out.println("Created CarRentalCompany: " + newCompany.getName());
+            } else {
+                System.out.println("Failed to create CarRentalCompany.");
+            }
+        });
+    }
+
+    private void addOperatorDetails(GridPane grid) {
+    	// Create Operator UI components
+        Label createOperatorLabel = new Label("Create Operator");
+        grid.add(createOperatorLabel, 5, 0, 2, 1);
+
+        Label usernameLabel = new Label("Username:");
+        grid.add(usernameLabel, 5, 1);
+        TextField usernameTextField = new TextField();
+        grid.add(usernameTextField, 6, 1);
+
+        Label passwordLabel = new Label("Password:");
+        grid.add(passwordLabel, 5, 2);
+        TextField passwordTextField = new TextField();
+        grid.add(passwordTextField, 6, 2);
+
+        // Add Operator button
+        Button createOperatorButton = new Button("Create Operator");
+        grid.add(createOperatorButton, 5, 3, 2, 1);
+        
+        createOperatorButton.setOnAction(event -> {
+            String newOperatorUsername = usernameTextField.getText();
+            String newOperatorPassword = passwordTextField.getText();
+
+            if (!newOperatorUsername.isEmpty() && !newOperatorPassword.isEmpty()) {
+                 UserDAO.createUser(newOperatorUsername, newOperatorPassword, "Operator");
+
+                System.out.println("Operator created: " + newOperatorUsername);
+            } else {
+                System.out.println("Please enter a valid username and password for the new operator.");
+            }
+        });
+    }
+
+    private void addRentalProtocol(GridPane grid) {
+        // Rental Protocol UI components
+        // (...)
+    }
+
+    private void displayElementsBasedOnRole(GridPane grid) {
+    	if (loggedInUser != null && "Operator".equals(loggedInUser.getRole())) {
+//    	    nameLabel.setVisible(true);
+//    	    nameTextField.setVisible(true);
+//    	    phoneLabel.setVisible(true);
+//    	    phoneTextField.setVisible(true);
+//    	    addressLabel.setVisible(true);
+//    	    addressTextField.setVisible(true);
+//    	    addClientButton.setVisible(true);
+    	} else {
+//    	    nameLabel.setVisible(false);
+//    	    nameTextField.setVisible(false);
+//    	    phoneLabel.setVisible(false);
+//    	    phoneTextField.setVisible(false);
+//    	    addressLabel.setVisible(false);
+//    	    addressTextField.setVisible(false);
+//    	    addClientButton.setVisible(false);
+    	}
+    }
+
 
     public static void main(String[] args) {
         launch(args);

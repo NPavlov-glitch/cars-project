@@ -20,6 +20,7 @@ public class UserDAO {
     private static final String SELECT_CLIENT = "SELECT * FROM clients WHERE phone = ?";
     private static final String SELECT_ALL_CARS = "SELECT * FROM cars";
     private static final String SELECT_ALL_CLIENTS = "SELECT * FROM clients";
+    private static final String SELECT_ALL_PROTOCOLS = "SELECT * FROM rentals";
     private static final String CHECK_USERNAME_AVAILABILITY = "SELECT * FROM users WHERE username = ?";
 
     public static boolean createUser(String username, String password, String role) {
@@ -216,5 +217,31 @@ public class UserDAO {
 	    }
 
 	    return clients;
+	}
+	
+	public static List<RentalProtocol> getAllRentalProtocols() {
+	    List<RentalProtocol> protocols = new ArrayList<>();
+
+	    try (Connection connection = DatabaseConnector.connect();
+	         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PROTOCOLS);
+	         ResultSet resultSet = preparedStatement.executeQuery()) {
+
+	        while (resultSet.next()) {
+	        	RentalProtocol protocol = new RentalProtocol(
+	            		resultSet.getInt("car_id"),
+	                    resultSet.getInt("client_id"),
+	                    resultSet.getTimestamp("rental_start_date").toLocalDateTime(),
+	                    resultSet.getTimestamp("rental_end_date").toLocalDateTime(),
+	                    resultSet.getString("rental_notes"),
+	                    resultSet.getBoolean("is_rented")
+	            );
+
+	        	protocols.add(protocol);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return protocols;
 	}
 }
