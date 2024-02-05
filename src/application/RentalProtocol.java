@@ -1,6 +1,7 @@
 package application;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class RentalProtocol {
 	private int id;
@@ -11,7 +12,6 @@ public class RentalProtocol {
     private String rentalNotes;
     private boolean rentalStatus;
 
-    // Constructors
     public RentalProtocol(int id, int carId, int clientId, LocalDateTime rentalStartDateTime, LocalDateTime rentalEndDateTime, String rentalNotes, boolean rentalStatus) {
     	this.id = id;
         this.carId = carId;
@@ -31,7 +31,6 @@ public class RentalProtocol {
         this.rentalStatus = rentalStatus;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -40,7 +39,6 @@ public class RentalProtocol {
         this.id = id;
     }
 
-    // Getter and setter methods for carId
     public int getCarId() {
         return carId;
     }
@@ -49,7 +47,6 @@ public class RentalProtocol {
         this.carId = carId;
     }
 
-    // Getter and setter methods for clientId
     public int getClientId() {
         return clientId;
     }
@@ -58,7 +55,6 @@ public class RentalProtocol {
         this.clientId = clientId;
     }
 
-    // Getter and setter methods for rentalStartDateTime
     public LocalDateTime getRentalStartDateTime() {
         return rentalStartDateTime;
     }
@@ -66,8 +62,16 @@ public class RentalProtocol {
     public void setRentalStartDateTime(LocalDateTime rentalStartDateTime) {
         this.rentalStartDateTime = rentalStartDateTime;
     }
+    
+    public String getFormattedRentalStartDateTime() {
+        if (rentalStartDateTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return rentalStartDateTime.format(formatter);
+        } else {
+            return "N/A";
+        }
+    }
 
-    // Getter and setter methods for rentalEndDateTime
     public LocalDateTime getRentalEndDateTime() {
         return rentalEndDateTime;
     }
@@ -75,8 +79,16 @@ public class RentalProtocol {
     public void setRentalEndDateTime(LocalDateTime rentalEndDateTime) {
         this.rentalEndDateTime = rentalEndDateTime;
     }
+    
+    public String getFormattedRentalEndDateTime() {
+        if (rentalEndDateTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return rentalEndDateTime.format(formatter);
+        } else {
+            return "N/A";
+        }
+    }
 
-    // Getter and setter methods for rentalNotes
     public String getRentalNotes() {
         return rentalNotes;
     }
@@ -85,12 +97,19 @@ public class RentalProtocol {
         this.rentalNotes = rentalNotes;
     }
 
-    // Getter and setter methods for rentalStatus
     public boolean getRentalStatus() {
         return rentalStatus;
     }
 
     public void setRentalStatus(boolean rentalStatus) {
         this.rentalStatus = rentalStatus;
+    }
+    
+    public String getFormattedRentalStatus() {
+    	if(rentalStatus) {
+    		return "Currently Rented";
+    	} else {
+    		return "Rent Completed";
+    	}
     }
 }

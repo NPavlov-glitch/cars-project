@@ -4,10 +4,9 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private String role; // Administrator or Operator
+    private String role;
     private CarRentalCompany carRentalCompany;
 
-    // Constructors
     public User(int id, String username, String password, String role) {
         this.id = id;
         this.username = username;
@@ -15,7 +14,6 @@ public class User {
         this.role = role;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }

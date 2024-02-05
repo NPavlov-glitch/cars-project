@@ -25,7 +25,6 @@ import javafx.util.StringConverter;
 
 public class CarRentalUI extends Application {
 	
-	private List<Car> cars = new ArrayList<>();
     private User loggedInUser;
     
     public CarRentalUI(User loggedInUser) {
@@ -177,7 +176,6 @@ public class CarRentalUI extends Application {
         VBox carListLayout = new VBox(10);
         carListLayout.setPadding(new Insets(20, 20, 20, 20));
 
-        // Fetch the list of cars from the database
         List<Car> allCars = UserDAO.getAllCars();
 
         ObservableList<String> carStrings = FXCollections.observableArrayList();
@@ -201,18 +199,19 @@ public class CarRentalUI extends Application {
         VBox carListLayout = new VBox(10);
         carListLayout.setPadding(new Insets(20, 20, 20, 20));
 
-        // Fetch the list of cars from the database
         List<RentalProtocol> allProtocols = UserDAO.getAllRentalProtocols();
 
         ObservableList<String> carStrings = FXCollections.observableArrayList();
         for (RentalProtocol protocol : allProtocols) {
-            carStrings.add(protocol.getRentalStartDateTime() + " " + protocol.getRentalEndDateTime());
+            carStrings.add("Start date: " + protocol.getFormattedRentalStartDateTime()
+            + " End Date:" + protocol.getFormattedRentalEndDateTime()
+            + " Status: " + protocol.getFormattedRentalStatus());
         }
 
         ListView<String> carListView = new ListView<>(carStrings);
         carListLayout.getChildren().add(carListView);
 
-        Scene carListScene = new Scene(carListLayout, 300, 200);
+        Scene carListScene = new Scene(carListLayout, 500, 400);
         carListStage.setScene(carListScene);
         carListStage.show();
     }
@@ -223,7 +222,6 @@ public class CarRentalUI extends Application {
     }
     
     private void addCarDetails(GridPane grid) {
-    	// Car details UI components
         Label carLabel = new Label("Car Details");
         grid.add(carLabel, 0, 0, 2, 1);
 
@@ -262,14 +260,12 @@ public class CarRentalUI extends Application {
         CheckBox smokerCheckBox = new CheckBox();
         grid.add(smokerCheckBox, 1, 8);
 
-        // Add Car button
         Button addCarButton = new Button("Add Car");
         grid.add(addCarButton, 0, 9, 2, 1);
         
         addCarButton.setOnAction(event -> {
             String model = modelTextField.getText();
 
-            // Retrieve values for additional attributes
             String yearText = yearTextField.getText();
             if (!yearText.isEmpty()) {
                 try {
@@ -280,7 +276,6 @@ public class CarRentalUI extends Application {
                     String photos = photosTextField.getText();
                     boolean smoker = smokerCheckBox.isSelected();
 
-                    // Create a new Car object using the provided details
                     Car car = new Car(model, year, carClass, category, features, photos, smoker);
                     
                     boolean success = UserDAO.createCar(car);
@@ -291,17 +286,11 @@ public class CarRentalUI extends Application {
                     	System.err.println("Failed to create a car!");
                     }
 
-                    // Add the created car to the list or perform any other logic
-                    cars.add(car);
-
-                    System.out.println("Added Car: " + car);
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid year format: " + yearText);
-                    // Handle the error (e.g., display an error message to the user)
                 }
             } else {
                 System.err.println("Year field is empty");
-                // Handle the error (e.g., display an error message to the user)
             }
        
         });
@@ -309,7 +298,6 @@ public class CarRentalUI extends Application {
     }
 
     private void addClientDetails(GridPane grid) {
-    	 // Client details UI components
         Label clientLabel = new Label("Client Details");
         grid.add(clientLabel, 0, 10, 2, 1);
 
@@ -435,11 +423,6 @@ public class CarRentalUI extends Application {
                 System.out.println("Please enter a valid username and password for the new operator.");
             }
         });
-    }
-
-    private void addRentalProtocol(GridPane grid) {
-        // Rental Protocol UI components
-        // (...)
     }
 
     private void displayElementsBasedOnRole(GridPane grid) {
