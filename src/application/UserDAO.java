@@ -5,8 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +16,15 @@ public class UserDAO {
     private static final String INSERT_CLIENT = "INSERT INTO clients (name, phone, address) VALUES (?, ?, ?)";
     private static final String INSERT_CAR = "INSERT INTO cars (model, year, class, category, features, photos, smoker) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String INSERT_RENTAL_PROTOCOL = "INSERT INTO rentals (client_id, car_id, rental_start_date, rental_end_date, rental_notes, is_rented) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_COMPLETION_PROTOCOL = "INSERT INTO completed_rentals (rental_id, notes, date) VALUES (?, ?, ?)";
     private static final String SELECT_USER = "SELECT * FROM users WHERE username = ? AND password = ?";
+    private static final String SELECT_PROTOCOL = "SELECT * FROM rentals WHERE id = ?";
     private static final String SELECT_CLIENT = "SELECT * FROM clients WHERE phone = ?";
     private static final String SELECT_ALL_CARS = "SELECT * FROM cars";
     private static final String SELECT_ALL_CLIENTS = "SELECT * FROM clients";
     private static final String SELECT_ALL_PROTOCOLS = "SELECT * FROM rentals";
     private static final String CHECK_USERNAME_AVAILABILITY = "SELECT * FROM users WHERE username = ?";
+    private static final String UPDATE_RENTAL_PROTOCOL_STATUS = "UPDATE rentals SET is_rented = ? WHERE id = ?";
 
     public static boolean createUser(String username, String password, String role) {
         try (Connection connection = DatabaseConnector.connect();
@@ -110,6 +113,21 @@ public class UserDAO {
         }
     }
 
+    public static boolean createCompletionProtocol(int rentalProtocolId, String notes) {
+        try (Connection connection = DatabaseConnector.connect();
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COMPLETION_PROTOCOL)) {
+        	preparedStatement.setInt(1, rentalProtocolId);
+        	preparedStatement.setString(2, notes);
+            preparedStatement.setTimestamp(3, Timestamp.from(Instant.now()));
+            
+
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     
     public static boolean isUsernameAvailable(String username) {
         try (Connection connection = DatabaseConnector.connect();
@@ -126,7 +144,7 @@ public class UserDAO {
     public static User authenticateUser(String username, String password) {
     	
         try (Connection connection = DatabaseConnector.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -228,6 +246,7 @@ public class UserDAO {
 
 	        while (resultSet.next()) {
 	        	RentalProtocol protocol = new RentalProtocol(
+	        			resultSet.getInt("id"),
 	            		resultSet.getInt("car_id"),
 	                    resultSet.getInt("client_id"),
 	                    resultSet.getTimestamp("rental_start_date").toLocalDateTime(),
@@ -244,4 +263,46 @@ public class UserDAO {
 
 	    return protocols;
 	}
+	
+	public static RentalProtocol getRentalProtocolFromId(int rentalProtocolId) {
+	    try (Connection connection = DatabaseConnector.connect();
+	         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PROTOCOL)) {
+	        preparedStatement.setInt(1, rentalProtocolId);
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            if (resultSet.next()) {
+	                return new RentalProtocol(
+	                        resultSet.getInt("id"),
+	                        resultSet.getInt("car_id"),
+	                        resultSet.getInt("client_id"),
+	                        resultSet.getTimestamp("rental_start_date").toLocalDateTime(),
+	                        resultSet.getTimestamp("rental_end_date").toLocalDateTime(),
+	                        resultSet.getString("rental_notes"),
+	                        resultSet.getBoolean("is_rented")
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+	
+	public static boolean updateRentalStatus(int rentalProtocolId) { 
+	    try (Connection connection = DatabaseConnector.connect();
+	         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_RENTAL_PROTOCOL_STATUS)) {
+	        preparedStatement.setBoolean(1, false);
+	        preparedStatement.setInt(2, rentalProtocolId);
+	        
+	        int rowsUpdated = preparedStatement.executeUpdate();
+	        
+	        System.out.println("Protocol Status Updated");
+	        
+	        return rowsUpdated > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return false;
+	}
+
 }

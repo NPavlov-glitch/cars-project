@@ -1,9 +1,9 @@
 package application;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+
+import javafx.util.Callback;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -15,6 +15,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -192,28 +193,56 @@ public class CarRentalUI extends Application {
     }
 
     private void openRentalsListWindow() {
-        Stage carListStage = new Stage();
-        carListStage.initModality(Modality.APPLICATION_MODAL);
-        carListStage.setTitle("Protocols List");
+        Stage rentalListStage = new Stage();
+        rentalListStage.initModality(Modality.APPLICATION_MODAL);
+        rentalListStage.setTitle("Protocols List");
 
-        VBox carListLayout = new VBox(10);
-        carListLayout.setPadding(new Insets(20, 20, 20, 20));
+        VBox rentalListLayout = new VBox(10);
+        rentalListLayout.setPadding(new Insets(20, 20, 20, 20));
 
         List<RentalProtocol> allProtocols = UserDAO.getAllRentalProtocols();
 
-        ObservableList<String> carStrings = FXCollections.observableArrayList();
-        for (RentalProtocol protocol : allProtocols) {
-            carStrings.add("Start date: " + protocol.getFormattedRentalStartDateTime()
-            + " End Date:" + protocol.getFormattedRentalEndDateTime()
-            + " Status: " + protocol.getFormattedRentalStatus());
-        }
+        ObservableList<RentalProtocol> rentalProtocolList = FXCollections.observableArrayList(allProtocols);
+        ListView<RentalProtocol> rentalListView = new ListView<>(rentalProtocolList);
+        rentalListView.setCellFactory(new Callback<ListView<RentalProtocol>, ListCell<RentalProtocol>>() {
+            @Override
+            public ListCell<RentalProtocol> call(ListView<RentalProtocol> param) {
+                return new ListCell<RentalProtocol>() {
+                    @Override
+                    protected void updateItem(RentalProtocol protocol, boolean empty) {
+                        super.updateItem(protocol, empty);
+                        if (empty || protocol == null) {
+                            setText(null);
+                        } else {
+                            setText("Start date: " + protocol.getFormattedRentalStartDateTime()
+                                    + " End Date:" + protocol.getFormattedRentalEndDateTime()
+                                    + " Status: " + protocol.getFormattedRentalStatus());
+                        }
+                    }
+                };
+            }
+        });
 
-        ListView<String> carListView = new ListView<>(carStrings);
-        carListLayout.getChildren().add(carListView);
+        rentalListLayout.getChildren().add(rentalListView);
 
-        Scene carListScene = new Scene(carListLayout, 500, 400);
-        carListStage.setScene(carListScene);
-        carListStage.show();
+        Button completeRentButton = new Button("Complete Rent");
+        completeRentButton.setDisable(true);
+        rentalListLayout.getChildren().add(completeRentButton);
+
+        rentalListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.getRentalStatus()) {
+                completeRentButton.setDisable(false);
+                if (newValue != null) {
+                    completeRentButton.setOnAction(event -> showCompletionPopup(newValue.getId()));
+                }
+            } else {
+                completeRentButton.setDisable(true);
+            }
+        });
+
+        Scene rentalListScene = new Scene(rentalListLayout, 500, 400);
+        rentalListStage.setScene(rentalListScene);
+        rentalListStage.show();
     }
     
     private boolean isValidPhoneNumber(String phone) {
@@ -445,6 +474,52 @@ public class CarRentalUI extends Application {
     	}
     }
 
+    private void showCompletionPopup(int rentalProtocolId) {
+        Stage completionPopup = new Stage();
+        completionPopup.initModality(Modality.APPLICATION_MODAL);
+        completionPopup.setTitle("Complete Rent");
+
+        VBox popupLayout = new VBox(10);
+        popupLayout.setPadding(new Insets(20, 20, 20, 20));
+
+        TextField completionNotesTextField = new TextField();
+        Button completeRentPopupButton = new Button("Complete Rent");
+
+        completeRentPopupButton.setOnAction(event -> {
+            String completionNotes = completionNotesTextField.getText();
+            if (!completionNotes.isEmpty()) {
+                completeRentAction(rentalProtocolId, completionNotes);
+                completionPopup.close();
+            } else {
+                // Handle the case where completion notes are empty
+            }
+        });
+
+        popupLayout.getChildren().addAll(completionNotesTextField, completeRentPopupButton);
+
+        Scene completionPopupScene = new Scene(popupLayout, 300, 150);
+        completionPopup.setScene(completionPopupScene);
+        completionPopup.showAndWait();
+    }
+
+    
+    private void completeRentAction(int selectedProtocolId, String completionNotes) {
+        RentalProtocol selectedProtocol = UserDAO.getRentalProtocolFromId(selectedProtocolId);
+
+        if (selectedProtocol != null) {
+        	boolean updateSuccess = UserDAO.updateRentalStatus(selectedProtocolId);
+        	
+        	if (updateSuccess) {
+        		boolean creationSuccess = UserDAO.createCompletionProtocol(selectedProtocolId, completionNotes);
+        		
+        		if (creationSuccess) {
+        			System.out.println("Rental Finished!");
+        		}
+        	} else {
+        		System.err.println("Error in updating protocol status!");
+        	}
+        }
+    }
 
     public static void main(String[] args) {
         launch(args);
